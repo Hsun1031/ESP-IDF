@@ -18,7 +18,7 @@ void getDhtData(void* pvParameters) {
     uint8_t dht11_data_parts[5] = { 0, 0, 0, 0, 0 };
     int64_t dht11_data_start_time;
     uint8_t i = 0;
-    uint8_t k = 0;
+    int8_t  k = 0;
 
     /**
      *   
@@ -60,11 +60,11 @@ void getDhtData(void* pvParameters) {
      * 
      **/
     for(i = 0; i < 5; i++) {
-        for(k = 0; k < 8; k++) {
+        for(k = 7; k >= 0; k--) {
             while(!gpio_get_level(DHT11_PIN));
             dht11_data_start_time = esp_timer_get_time();
             while(gpio_get_level(DHT11_PIN));
-            *(dht11_data_parts + i)  += (esp_timer_get_time()- dht11_data_start_time < DHT11_SENSOR_OUTPUT_COMPARE_TIME_US)? (0 << (7 - k)): (1 << (7 - k));
+            *(dht11_data_parts + i)  += (esp_timer_get_time()- dht11_data_start_time < DHT11_SENSOR_OUTPUT_COMPARE_TIME_US)? (0 << k): (1 << k);
         }
     }
 
@@ -83,7 +83,7 @@ void getDhtData(void* pvParameters) {
      * Check Data is not Error. 
      * 
      **/
-    if(*(dht11_data_parts + 4) - *(dht11_data_parts + 3) - *(dht11_data_parts + 2) - *(dht11_data_parts + 1) - *(dht11_data_parts + 0)) {
+    if(*(dht11_data_parts + 4) - *(dht11_data_parts + 3) - *(dht11_data_parts + 2) - *(dht11_data_parts + 1) - *(dht11_data_parts + 0) < 0) {
         ESP_LOGI(DHT11_TAG2, "Data Read Error!");
     } else {
         data->temp = (float)(*(dht11_data_parts + 2)) + 0.1 * (*(dht11_data_parts + 3));
@@ -102,4 +102,3 @@ void dhtTask(void* pvParameters) {
         vTaskDelay(vTaskDelay_DHT11_MIN_INTERVAL_TIME_MS);
     }
 }
-

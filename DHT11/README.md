@@ -35,3 +35,8 @@ This is ESP32 and DHT11 Module for ESP-IDF Project.
 |:----:|:----:|:---:|:---:|
 |ESP32 |D14   |3V3  |GND  |
 |DHT11 |S     |+    |-    |
+
+## ver
+
+* 2022/02/26(ver 1.0.0) New DHT11 Project
+* 2022/02/27(ver 1.0.1) Fix for loop and check if
